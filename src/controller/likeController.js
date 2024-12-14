@@ -77,7 +77,7 @@ const getAllLikedVideos = asyncHandler(async (req, res) => {
   // const videos = await Like.find({likedBy : req.user?._id,})
   const video = await Like.aggregate([
     {
-      $match: { likedBy:new mongoose.Types.ObjectId(req.user?._id) },
+      $match: { likedBy: new mongoose.Types.ObjectId(req.user?._id) },
     },
     {
       $lookup: {
@@ -88,33 +88,33 @@ const getAllLikedVideos = asyncHandler(async (req, res) => {
         pipeline: [
           {
             $lookup: {
-              from : "users",
-            localField: "owner",
-            foreignField: "_id",
-            as: "owner",
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
             },
           },
           {
-              $project : {
-                     title : 1,
-                     owner : {
-                            $arrayElemAt : ["$owner",0]
-                     }
+            $project: {
+              title: 1,
+              owner: {
+                $arrayElemAt: ["$owner", 0]
               }
+            }
           },
           {
-              $project: {
-                "owner.fullName":1,
-                title : 1 
-              },
+            $project: {
+              "owner.fullName": 1,
+              title: 1
             },
+          },
         ],
       },
     },
     {
-       $unwind : "$likedVideo"
+      $unwind: "$likedVideo"
     }
-    
+
   ]);
   return res
     .status(200)
